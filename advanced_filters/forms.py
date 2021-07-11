@@ -213,7 +213,6 @@ class AdvancedFilterFormSet(BaseFormSet):
         # override the original property to include `model_fields` argument
         forms = [self._construct_form(i, model_fields=self.model_fields)
                  for i in range(self.total_form_count())]
-        forms.append(self.empty_form)  # add initial empty form
         return forms
 
 
@@ -330,7 +329,7 @@ class AdvancedFilterForm(CleanWhiteSpacesMixin, forms.ModelForm):
         query = Q()
         ORed = []
         for form in self._non_deleted_forms:
-            if not hasattr(form, 'cleaned_data'):
+            if not hasattr(form, 'cleaned_data') or not form.is_valid():
                 continue
             if form.cleaned_data['field'] == "_OR":
                 ORed.append(query)
